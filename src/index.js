@@ -1,6 +1,6 @@
 'use strict';
 
-//Task3***************************************
+//Task3*******--ITERATION--***************
 
 const iterableObject = {
     firstField: 1,
@@ -41,7 +41,7 @@ console.log(iterator.next()); //{ done: false, value: 4 }
 console.log(iterator.next()); //{ done: true, value: undefined }
 
 
-//Task4*****свой reduce***********************
+//TASK_4.1*****--REDUCE--***********************
 //arr.reduce((prev, cur, i, arr) => {}, init)
 
 let arr = [1, 9, 300, 4, 6];
@@ -67,12 +67,12 @@ function max(result, current) {
 }
 
 const sumOfValues = reduce(arr, sum);
-console.log(sumOfValues); //320
+console.log('sumOfValues', sumOfValues); //sumOfValues 320
 
 const maxOfValues = reduce(arr, max);
-console.log(maxOfValues); //300
+console.log('maxOfValues', maxOfValues); //maxOfValues 300
 
-//Task4*****свой map***********************
+//TASK_4.2*****--MAP--***********************
 //arr.map((item, i, arr) => {}[,thisArg])
 
 const arr2 = [120, 230, 740, 650, 380];
@@ -95,9 +95,47 @@ const objArr = map(arr2, buildObj);
 console.log(objArr); //[ {month_1: 120}, {month_2: 230}, ....]
 
 //callback2
-function doubled(item, i) {
+function doubled(item) {
     return item * 2;
 }
 
 const doubledArr = map(arr2, doubled);
 console.log(doubledArr); // [ 240, 460, 1480, 1300, 760 ]
+
+
+//TASK_4.3****BUBLE SORTING***********************
+
+let arr3 = [1000, 9, 1, 8, 25, 7, 3, 15, 400];
+
+function bubleSort (array, callback) {
+    let sortedArr = array.slice();
+    return callback(sortedArr);
+}
+
+//callback
+function sortingF(arr) {
+    let length = arr.length;
+
+    while (length) {
+
+        for (let i = 0; i < arr.length; i++) {
+            let bigger;
+
+            if (arr[i] > arr[i+1]) {
+                bigger = arr[i];
+                arr[i] = arr[i+1];
+                arr[i+1] = bigger;
+            }
+        }
+        length--;
+    }
+    return arr;
+
+}
+
+console.time('bulbSort');
+const sortedArr = bubleSort(arr3, sortingF);
+console.timeEnd('bulbSort');
+
+console.log(arr3); //old arr [ 1000, 9, 1, 8, 25, 7, 3, 15, 400 ]
+console.log(sortedArr); //after sorting [ 1, 3, 7, 8, 9, 15, 25, 400, 1000 ]
