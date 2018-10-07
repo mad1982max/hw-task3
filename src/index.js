@@ -47,9 +47,9 @@ console.log(iterator.next()); //{ done: true, value: undefined }
 let arr = [1, 9, 300, 4, 6];
 
 function reduce(arr, callback, initValue = 0) {
-    let i, collector = initValue;
+    let collector = initValue;
 
-    for (i = 0; i < arr.length; i++) {
+    for (let i = 0; i < arr.length; i++) {
         let currentElem = arr[i];
         collector = callback(collector, currentElem, i, arr);
     }
@@ -71,3 +71,33 @@ console.log(sumOfValues); //320
 
 const maxOfValues = reduce(arr, max);
 console.log(maxOfValues); //300
+
+//Task4*****свой map***********************
+//arr.map((item, i, arr) => {}[,thisArg])
+
+const arr2 = [120, 230, 740, 650, 380];
+
+function map(arr, callback) {
+    let resultArr= [];
+    for (let i = 0; i < arr.length; i++) {
+        let current = arr[i];
+        resultArr[i] = callback(current, i, arr);
+    }
+    return resultArr;
+}
+
+//callback1
+function buildObj(item, i) {
+    return {[`month_${i+1}`]: item};
+}
+
+const objArr = map(arr2, buildObj);
+console.log(objArr); //[ {month_1: 120}, {month_2: 230}, ....]
+
+//callback2
+function doubled(item, i) {
+    return item * 2;
+}
+
+const doubledArr = map(arr2, doubled);
+console.log(doubledArr); // [ 240, 460, 1480, 1300, 760 ]
