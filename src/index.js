@@ -1,74 +1,73 @@
 'use strict';
 
-const cars = require('./data/cars'); // IMMUTABLE. DON'T CHANGE cars
-const customers = require('./data/customers'); // IMMUTABLE. DON'T CHANGE customers
-const dealerships = require('./data/dealerships'); // IMMUTABLE. DON'T CHANGE dealerships
-const orders = require('./data/orders'); // IMMUTABLE. DON'T CHANGE orders
+//Task3***************************************
 
-//subtask1***************************************
+const iterableObject = {
+    firstField: 1,
+    secondField: 2
+};
 
-const subtask1 = () => {
-    return dealerships.reduce((collector, dealer) => {
-        let carArrEachDealer = cars.filter(car => car.dealershipId === dealer.dealershipId);
+iterableObject[Symbol.iterator] = function() {
+    let keys = Object.keys(this);
+    let index = 0;
+    let self = this;
 
-        const dealerObj = {};
-        dealerObj.dealershipId = dealer.dealershipId;
-        dealerObj.name = dealer.name;
-        dealerObj.state = dealer.state;
-
-        if(carArrEachDealer.length === 0) {
-            dealerObj.cars = [];
-        } else {
-            dealerObj.cars = reBuildResultArr(carArrEachDealer);
+    return {
+        next() {
+            return {
+                done: index >= keys.length,
+                value: self[keys[index ++]]
+            }
         }
-
-        collector.push(dealerObj);
-
-        return collector;
-    }, []);
-
-//-----------------------------------------------
-
-    function findUniqVal(arr, key) { //Unique values by key
-        const set = new Set();
-        arr.forEach(val => set.add(val[key]));
-        return [...set];
-    }
-//-----------------------------------------------
-
-    function reBuildResultArr(carArr) {
-        const carsResult = [];
-        const makers = findUniqVal(carArr, 'make'); //all makers
-
-        makers.forEach(maker => {
-
-            const arrOfMakers = carArr.filter(car => car.make === maker);
-
-            const grouped = arrOfMakers.reduce((colect, car) => {
-                colect[car.model] = colect[car.model] || [];
-
-                if(colect[car.model].indexOf(car.displayName) === -1) { //check for repeats
-                    colect[car.model].push(car.displayName);
-                }
-
-                return colect;
-            }, {});
-
-            const modelsObj = Object.keys(grouped).map(key => {
-                return {model: key, displayName: grouped[key]}
-            });
-
-            const obj = {make: maker, models: []};
-            obj.models.push(modelsObj);
-            carsResult.push(obj);
-        });
-        return carsResult;
     }
 
 };
 
-console.time('subtask #1');
-const result1 = subtask1();
-console.log(result1);
-console.timeEnd('subtask #1');
-console.log('subtask #1 result: ', JSON.stringify(result1[0], null, 2), JSON.stringify(result1[result1.length - 1], null, 2));
+iterableObject.thirdField = 3;
+iterableObject.fourthField = 4;
+
+for (let o of iterableObject) {
+    console.log(o); //1, 2, 3, 4
+}
+
+console.log([...iterableObject]); //[1, 2, 3, 4]
+
+let iterator = iterableObject[Symbol.iterator]();
+
+console.log(iterator.next()); //{ done: false, value: 1 }
+console.log(iterator.next()); //{ done: false, value: 2 }
+console.log(iterator.next()); //{ done: false, value: 3 }
+console.log(iterator.next()); //{ done: false, value: 4 }
+console.log(iterator.next()); //{ done: true, value: undefined }
+
+
+//Task4*****свой reduce***********************
+//arr.reduce((prev, cur, i, arr) => {}, init)
+
+let arr = [1, 9, 300, 4, 6];
+
+function reduce(arr, callback, initValue = 0) {
+    let i, collector = initValue;
+
+    for (i = 0; i < arr.length; i++) {
+        let currentElem = arr[i];
+        collector = callback(collector, currentElem, i, arr);
+    }
+    return collector;
+}
+
+//first callback
+function sum(result, current) {
+    return result += current;
+}
+
+//second callback
+function max(result, current) {
+    return current >= result? current: result
+}
+
+const sumOfValues = reduce(arr, sum);
+console.log(sumOfValues); //320
+
+const maxOfValues = reduce(arr, max);
+console.log(maxOfValues); //300
